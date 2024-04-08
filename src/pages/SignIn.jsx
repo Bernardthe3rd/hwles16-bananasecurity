@@ -10,15 +10,22 @@ function SignIn() {
 
     async function handleLogin (f) {
         f.preventDefault();
+        const controller = new AbortController();
         try {
             const response = await axios.post("http://localhost:3000/login", {
                 email,
                 password, //hello12345
+            }, {
+                signal: controller.signal
             })
+
             console.log("Gebruiker is succesvol ingelogd!")
             login(response.data.accessToken)
         } catch (e) {
             console.error(e)
+        }
+        return function cleanup() {
+            controller.abort();
         }
     }
 

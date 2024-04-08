@@ -8,14 +8,15 @@ function Profile() {
     const [privateContent, setPrivateContent] = useState({});
 
     useEffect(() => {
-
+        const controller = new AbortController();
         async function getProfile() {
             try {
                 const response = await axios.get("http://localhost:3000/660/private-content", {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    }
+                    },
+                    signal: controller.signal,
                 })
                 setPrivateContent(response.data)
             } catch (e) {
@@ -23,6 +24,10 @@ function Profile() {
             }
         }
         void getProfile();
+
+        return function cleanup() {
+            controller.abort();
+        }
     }, []);
 
     console.log(privateContent)

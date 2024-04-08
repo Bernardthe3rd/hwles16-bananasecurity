@@ -11,17 +11,21 @@ function SignUp() {
 
     async function handleRegister (e) {
         e.preventDefault();
+        const controller = new AbortController();
         try {
             const response = await axios.post("http://localhost:3000/register", {
                 email,
                 password,
                 username,
-            })
+            }, {signal: controller.signal});
             console.log("de gebruiker is succesvol geregistreerd!")
         } catch (e) {
             console.error(e)
         }
         navigate("/signin")
+        return function cleanup() {
+            controller.abort();
+        }
     }
 
   return (
